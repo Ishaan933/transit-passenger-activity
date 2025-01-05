@@ -145,16 +145,24 @@ if st.sidebar.button("Predict"):
                 f"{result['total_alightings']:.2f}"
             ]
         })
-        #st.table(prediction_data)
-        #st.table(prediction_data.style.hide(axis='index'))
         st.write(prediction_data.style.hide(axis="index").to_html(), unsafe_allow_html=True)
 
-
-        st.markdown("### Calculation Breakdown for Predictions:")
-        st.markdown(f"- **Schedule Period:** 01/01/2025 to 04/30/2025")
-        st.markdown(f"- **Total Weekdays in Schedule Period:** {total_weekdays}")
-        st.markdown(f"- **Total Predicted Boardings:** {result['boardings_prediction']:.2f} × {total_weekdays}")
-        st.markdown(f"- **Total Predicted Alightings:** {result['alightings_prediction']:.2f} × {total_weekdays}")
+        st.markdown(
+            f"<div style='white-space: nowrap;'><b>Schedule Period:</b> 01/01/2025 to 04/30/2025</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"<div style='white-space: nowrap;'><b>Total Weekdays in Schedule Period:</b> {total_weekdays}</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"<div style='white-space: nowrap;'><b>Total Predicted Boardings:</b> {result['boardings_prediction']:.2f} × {total_weekdays}</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"<div style='white-space: nowrap;'><b>Total Predicted Alightings:</b> {result['alightings_prediction']:.2f} × {total_weekdays}</div>",
+            unsafe_allow_html=True,
+        )
 
     # Historical Data
     with col2:
@@ -184,16 +192,28 @@ if st.sidebar.button("Predict"):
                     f"{historical['total_boardings']:.2f}",
                     f"{historical['total_alightings']:.2f}"
                 ]
-            }).reset_index(drop=True)
-            #st.table(historical_data)
-            #st.table(historical_data.style.hide(axis='index'))
+            })
             st.write(historical_data.style.hide(axis="index").to_html(), unsafe_allow_html=True)
 
-            st.markdown("### Calculation Breakdown for Historical Data:")
-            st.markdown(f"- **Schedule Period Start Date:** {historical['start_date']}")
-            st.markdown(f"- **Schedule Period End Date:** {historical['end_date']}")
-            st.markdown(f"- **Total Weekdays in Schedule Period:** {historical['weekdays']}")
-            st.markdown(f"- **Total Historical Boardings:** {historical['average_boardings']:.2f} × {historical['weekdays']}")
-            st.markdown(f"- **Total Historical Alightings:** {historical['average_alightings']:.2f} × {historical['weekdays']}")
+            st.markdown(
+                f"<div style='white-space: nowrap;'><b>Schedule Period Start Date:</b> {historical['start_date']}</div>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"<div style='white-space: nowrap;'><b>Schedule Period End Date:</b> {historical['end_date']}</div>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"<div style='white-space: nowrap;'><b>Total Weekdays in Schedule Period:</b> {historical['weekdays']}</div>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"<div style='white-space: nowrap;'><b>Total Historical Boardings:</b> {historical['average_boardings']:.2f} × {historical['weekdays']}</div>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"<div style='white-space: nowrap;'><b>Total Historical Alightings:</b> {historical['average_alightings']:.2f} × {historical['weekdays']}</div>",
+                unsafe_allow_html=True,
+            )
         else:
             st.write("No historical data available.")
