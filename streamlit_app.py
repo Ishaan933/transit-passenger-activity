@@ -67,6 +67,13 @@ def predict_passenger_activity():
     boardings_prediction = rf_boardings.predict(input_data)[0]
     alightings_prediction = rf_alightings.predict(input_data)[0]
 
+    # Calculate total weekdays dynamically for predictions
+    prediction_schedule_start = datetime(2025, 1, 1)
+    prediction_schedule_end = datetime(2025, 4, 30)
+    total_weekdays = sum(
+        1 for d in pd.date_range(prediction_schedule_start, prediction_schedule_end) if d.weekday() < 5
+    )
+
     # Historical Data
     historical_data = df[
         (df["route_number"] == route_number) &
@@ -101,7 +108,6 @@ def predict_passenger_activity():
     else:
         historical_info = None
 
-    total_weekdays = 86
     total_boardings = boardings_prediction * total_weekdays
     total_alightings = alightings_prediction * total_weekdays
 
@@ -141,9 +147,9 @@ if st.sidebar.button("Predict"):
 
         st.markdown("### Calculation Breakdown for Predictions:")
         st.markdown(f"- **Schedule Period:** 01/01/2025 to 04/30/2025")
-        st.markdown(f"- **Total Weekdays in Schedule Period:** 86")
-        st.markdown(f"- **Total Predicted Boardings:** {result['boardings_prediction']:.2f} × 86")
-        st.markdown(f"- **Total Predicted Alightings:** {result['alightings_prediction']:.2f} × 86")
+        st.markdown(f"- **Total Weekdays in Schedule Period:** {total_weekdays}")
+        st.markdown(f"- **Total Predicted Boardings:** {result['boardings_prediction']:.2f} × {total_weekdays}")
+        st.markdown(f"- **Total Predicted Alightings:** {result['alightings_prediction']:.2f} × {total_weekdays}")
 
     # Historical Data
     with col2:
