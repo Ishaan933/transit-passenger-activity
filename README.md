@@ -1,19 +1,19 @@
-# 🎈 Blank app template
+# Passenger Activity Predictions App
 
-A simple Streamlit app template for you to modify!
+This application predicts passenger boardings and alightings for public transport routes based on historical data and machine learning models.
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+## Features
+- Predict average and total boardings/alightings.
+- Interactive input selection for schedule period, route, day type, and time period.
+- Powered by Random Forest models.
 
-### How to run it on your own machine
+## How to Use
+1. Deploy the app on Streamlit Sharing.
+2. Select the desired inputs in the sidebar.
+3. View the predictions and breakdown in the main app interface.
 
-1. Install the requirements
-
-   ```
-   $ pip install -r requirements.txt
-   ```
-
-2. Run the app
-
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+## Dependencies
+- Streamlit
+- Pandas
+- Joblib
+- Scikit-learn
