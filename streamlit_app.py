@@ -92,9 +92,17 @@ def predict_passenger_activity():
 
         historical_info = {
             "schedule_period": latest["schedule_period_name"],
-            "boardings": historical_boardings,
-            "alightings": historical_alightings,
+            "route_number": latest["route_number"],
+            "route_name": latest["route_name"],
+            "day_type": latest["day_type"],
+            "time_period": latest["time_period"],
+            "average_boardings": latest["average_boardings"],
+            "average_alightings": latest["average_alightings"],
+            "total_boardings": historical_boardings,
+            "total_alightings": historical_alightings,
             "weekdays": weekdays,
+            "start_date": start_date,
+            "end_date": end_date
         }
     else:
         historical_info = None
@@ -120,21 +128,70 @@ def predict_passenger_activity():
 if st.sidebar.button("Predict"):
     result = predict_passenger_activity()
 
-    st.subheader("Prediction Results")
-    st.write(f"**Average Boardings Prediction:** {result['boardings_prediction']:.2f}")
-    st.write(f"**Average Alightings Prediction:** {result['alightings_prediction']:.2f}")
-    st.write(f"**Total Predicted Boardings:** {result['total_boardings']:.2f}")
-    st.write(f"**Total Predicted Alightings:** {result['total_alightings']:.2f}")
+    # Create columns for layout
+    col1, col2 = st.columns(2)
 
-    # Display historical data
-    if result["historical"]:
-        st.subheader("Historical Data")
-        historical = result["historical"]
+    # Prediction Results
+    with col1:
+        st.subheader("Prediction Results")
+        prediction_data = {
+            "Metric": [
+                "Average Boardings Prediction",
+                "Average Alightings Prediction",
+                "Total Predicted Boardings",
+                "Total Predicted Alightings",
+            ],
+            "Value": [
+                f"{result['boardings_prediction']:.2f}",
+                f"{result['alightings_prediction']:.2f}",
+                f"{result['total_boardings']:.2f}",
+                f"{result['total_alightings']:.2f}",
+            ],
+        }
+        st.table(prediction_data)
 
-        # Display historical data as formatted text
-        st.write(f"**Schedule Period:** {historical['schedule_period']}")
-        st.write(f"**Total Weekdays:** {historical['weekdays']}")
-        st.write(f"**Total Boardings:** {historical['boardings']:.2f}")
-        st.write(f"**Total Alightings:** {historical['alightings']:.2f}")
-    else:
-        st.write("No historical data available.")
+        st.markdown("**Calculation Breakdown for Predictions:**")
+        st.markdown(f"- **Schedule Period:** 01/01/2025 to 04/30/2025")
+        st.markdown(f"- **Total Weekdays in Schedule Period:** 86")
+        st.markdown(f"- **Total Predicted Boardings:** {result['boardings_prediction']:.2f} × 86")
+        st.markdown(f"- **Total Predicted Alightings:** {result['alightings_prediction']:.2f} × 86")
+
+    # Historical Data
+    with col2:
+        st.subheader("Latest Historical Data")
+        if result["historical"]:
+            historical = result["historical"]
+            historical_data = {
+                "Metric": [
+                    "Schedule Period",
+                    "Route Number",
+                    "Route Name",
+                    "Day Type",
+                    "Time Period",
+                    "Average Boardings",
+                    "Average Alightings",
+                    "Total Historical Boardings",
+                    "Total Historical Alightings",
+                ],
+                "Value": [
+                    historical["schedule_period"],
+                    historical["route_number"],
+                    historical["route_name"],
+                    historical["day_type"],
+                    historical["time_period"],
+                    f"{historical['average_boardings']:.2f}",
+                    f"{historical['average_alightings']:.2f}",
+                    f"{historical['total_boardings']:.2f}",
+                    f"{historical['total_alightings']:.2f}",
+                ],
+            }
+            st.table(historical_data)
+
+            st.markdown("**Calculation Breakdown for Historical Data:**")
+            st.markdown(f"- **Schedule Period Start Date:** {historical['start_date']}")
+            st.markdown(f"- **Schedule Period End Date:** {historical['end_date']}")
+            st.markdown(f"- **Total Weekdays in Schedule Period:** {historical['weekdays']}")
+            st.markdown(f"- **Total Historical Boardings:** {historical['average_boardings']:.2f} × {historical['weekdays']}")
+            st.markdown(f"- **Total Historical Alightings:** {historical['average_alightings']:.2f} × {historical['weekdays']}")
+        else:
+            st.write("No historical data available.")
