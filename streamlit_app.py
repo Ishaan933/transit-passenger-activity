@@ -129,6 +129,12 @@ if st.sidebar.button("Predict"):
     # Display historical data
     if result["historical"]:
         st.subheader("Historical Data")
-        st.write(result["historical"])
+        historical = result["historical"]
+
+        # Display historical data as formatted text
+        st.write(f"**Schedule Period:** {historical['schedule_period']}")
+        st.write(f"**Total Weekdays:** {historical['weekdays']}")
+        st.write(f"**Total Boardings:** {historical['boardings']:.2f}")
+        st.write(f"**Total Alightings:** {historical['alightings']:.2f}")
     else:
         st.write("No historical data available.")
