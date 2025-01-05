@@ -117,13 +117,13 @@ def predict_passenger_activity():
 if st.sidebar.button("Predict"):
     result = predict_passenger_activity()
 
-    # Create columns for layout
-    col1, col2 = st.columns(2)
+    # Create columns for layout with spacing
+    col1, col2 = st.columns([1, 1], gap="large")
 
     # Prediction Results
     with col1:
         st.subheader("Prediction Results")
-        st.write(pd.DataFrame({
+        prediction_data = pd.DataFrame({
             "Metric": [
                 "Average Boardings Prediction",
                 "Average Alightings Prediction",
@@ -136,7 +136,8 @@ if st.sidebar.button("Predict"):
                 f"{result['total_boardings']:.2f}",
                 f"{result['total_alightings']:.2f}"
             ]
-        }))
+        }).reset_index(drop=True)
+        st.table(prediction_data)
 
         st.markdown("### Calculation Breakdown for Predictions:")
         st.markdown(f"- **Schedule Period:** 01/01/2025 to 04/30/2025")
@@ -149,7 +150,7 @@ if st.sidebar.button("Predict"):
         st.subheader("Latest Historical Data")
         if result["historical"]:
             historical = result["historical"]
-            st.write(pd.DataFrame({
+            historical_data = pd.DataFrame({
                 "Metric": [
                     "Schedule Period",
                     "Route Number",
@@ -172,7 +173,8 @@ if st.sidebar.button("Predict"):
                     f"{historical['total_boardings']:.2f}",
                     f"{historical['total_alightings']:.2f}"
                 ]
-            }))
+            }).reset_index(drop=True)
+            st.table(historical_data)
 
             st.markdown("### Calculation Breakdown for Historical Data:")
             st.markdown(f"- **Schedule Period Start Date:** {historical['start_date']}")
