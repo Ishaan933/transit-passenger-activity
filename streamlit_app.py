@@ -144,9 +144,11 @@ if st.sidebar.button("Predict"):
                 f"{result['total_boardings']:.2f}",
                 f"{result['total_alightings']:.2f}"
             ]
-        }).reset_index(drop=True)
+        })
         #st.table(prediction_data)
-        st.table(prediction_data.style.hide(axis='index'))
+        #st.table(prediction_data.style.hide(axis='index'))
+        st.write(prediction_data.style.hide(axis="index").to_html(), unsafe_allow_html=True)
+
 
         st.markdown("### Calculation Breakdown for Predictions:")
         st.markdown(f"- **Schedule Period:** 01/01/2025 to 04/30/2025")
@@ -184,8 +186,9 @@ if st.sidebar.button("Predict"):
                 ]
             }).reset_index(drop=True)
             #st.table(historical_data)
-            st.table(historical_data.style.hide(axis='index'))
-            
+            #st.table(historical_data.style.hide(axis='index'))
+            st.write(historical_data.style.hide(axis="index").to_html(), unsafe_allow_html=True)
+
             st.markdown("### Calculation Breakdown for Historical Data:")
             st.markdown(f"- **Schedule Period Start Date:** {historical['start_date']}")
             st.markdown(f"- **Schedule Period End Date:** {historical['end_date']}")
