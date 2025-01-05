@@ -30,16 +30,16 @@ schedule_period_name = st.sidebar.selectbox(
     "Select Schedule Period",
     ["Summer 2025", "Fall 2025", "Spring 2025", "Winter 2026"]
 )
-# Get unique stop numbers from the dataset
+
+# Stop Number Dropdown
 stop_numbers = sorted(df["stop_number"].unique())
 stop_number = st.sidebar.selectbox("Select Stop Number", stop_numbers)
 
-# Filter route numbers based on stop number
+# Route Number and Name
 filtered_data = df[df["stop_number"] == stop_number]
 route_numbers = sorted(filtered_data["route_number"].unique())
 route_number = st.sidebar.selectbox("Select Route Number", route_numbers)
 
-# Filter route names based on route number
 route_names = sorted(filtered_data[filtered_data["route_number"] == route_number]["route_name"].unique())
 route_name = st.sidebar.selectbox("Select Route Name", route_names)
 
@@ -48,16 +48,10 @@ time_period = st.sidebar.selectbox(
     "Select Time Period", ["Morning", "Mid-Day", "PM Peak", "Evening", "Night"]
 )
 
-# Prediction logic
+# Prediction Logic
 def predict_passenger_activity():
-    # Extract year and month
     year = 2025 if "2025" in schedule_period_name else 2026
     month = {"Spring": 4, "Summer": 7, "Fall": 10, "Winter": 1}[schedule_period_name.split()[0]]
-
-    # Handle unseen schedule periods
-    if schedule_period_name not in encodings["schedule_period_name"]:
-        max_encoding = max(encodings["schedule_period_name"].values())
-        encodings["schedule_period_name"][schedule_period_name] = max_encoding + 1
 
     input_data = pd.DataFrame({
         "year": [year],
@@ -69,16 +63,16 @@ def predict_passenger_activity():
         "time_period": [encodings["time_period"].get(time_period, -1)],
     })
 
-    # Predict boardings and alightings
+    # Predictions
     boardings_prediction = rf_boardings.predict(input_data)[0]
     alightings_prediction = rf_alightings.predict(input_data)[0]
 
-    # Historical data analysis
+    # Historical Data
     historical_data = df[
-        (df["route_number"] == route_number)
-        & (df["route_name"] == route_name)
-        & (df["day_type"] == day_type)
-        & (df["time_period"] == time_period)
+        (df["route_number"] == route_number) &
+        (df["route_name"] == route_name) &
+        (df["day_type"] == day_type) &
+        (df["time_period"] == time_period)
     ].sort_values("schedule_period_start_date", ascending=False)
 
     if not historical_data.empty:
@@ -107,14 +101,9 @@ def predict_passenger_activity():
     else:
         historical_info = None
 
-    # Predict total boardings/alightings for the current schedule period
-    weekdays = sum(
-        1
-        for d in pd.date_range(datetime(2025, 1, 1), datetime(2025, 4, 30))
-        if d.weekday() < 5
-    )
-    total_boardings = boardings_prediction * weekdays
-    total_alightings = alightings_prediction * weekdays
+    total_weekdays = 86
+    total_boardings = boardings_prediction * total_weekdays
+    total_alightings = alightings_prediction * total_weekdays
 
     return {
         "boardings_prediction": boardings_prediction,
@@ -124,33 +113,33 @@ def predict_passenger_activity():
         "historical": historical_info,
     }
 
-# Run prediction
+# Run Prediction
 if st.sidebar.button("Predict"):
     result = predict_passenger_activity()
 
-    # Create columns for layout
-    col1, col2 = st.columns(2)
+    # Add space and make layout responsive
+    col1, spacer, col2 = st.columns([1, 0.1, 1])
 
     # Prediction Results
     with col1:
         st.subheader("Prediction Results")
-        prediction_data = {
+        prediction_data = pd.DataFrame({
             "Metric": [
                 "Average Boardings Prediction",
                 "Average Alightings Prediction",
                 "Total Predicted Boardings",
-                "Total Predicted Alightings",
+                "Total Predicted Alightings"
             ],
             "Value": [
                 f"{result['boardings_prediction']:.2f}",
                 f"{result['alightings_prediction']:.2f}",
                 f"{result['total_boardings']:.2f}",
-                f"{result['total_alightings']:.2f}",
-            ],
-        }
+                f"{result['total_alightings']:.2f}"
+            ]
+        })
         st.table(prediction_data)
 
-        st.markdown("**Calculation Breakdown for Predictions:**")
+        st.markdown("### Calculation Breakdown for Predictions:")
         st.markdown(f"- **Schedule Period:** 01/01/2025 to 04/30/2025")
         st.markdown(f"- **Total Weekdays in Schedule Period:** 86")
         st.markdown(f"- **Total Predicted Boardings:** {result['boardings_prediction']:.2f} × 86")
@@ -161,7 +150,7 @@ if st.sidebar.button("Predict"):
         st.subheader("Latest Historical Data")
         if result["historical"]:
             historical = result["historical"]
-            historical_data = {
+            historical_data = pd.DataFrame({
                 "Metric": [
                     "Schedule Period",
                     "Route Number",
@@ -171,7 +160,7 @@ if st.sidebar.button("Predict"):
                     "Average Boardings",
                     "Average Alightings",
                     "Total Historical Boardings",
-                    "Total Historical Alightings",
+                    "Total Historical Alightings"
                 ],
                 "Value": [
                     historical["schedule_period"],
@@ -182,12 +171,12 @@ if st.sidebar.button("Predict"):
                     f"{historical['average_boardings']:.2f}",
                     f"{historical['average_alightings']:.2f}",
                     f"{historical['total_boardings']:.2f}",
-                    f"{historical['total_alightings']:.2f}",
-                ],
-            }
+                    f"{historical['total_alightings']:.2f}"
+                ]
+            })
             st.table(historical_data)
 
-            st.markdown("**Calculation Breakdown for Historical Data:**")
+            st.markdown("### Calculation Breakdown for Historical Data:")
             st.markdown(f"- **Schedule Period Start Date:** {historical['start_date']}")
             st.markdown(f"- **Schedule Period End Date:** {historical['end_date']}")
             st.markdown(f"- **Total Weekdays in Schedule Period:** {historical['weekdays']}")
