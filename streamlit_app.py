@@ -30,9 +30,9 @@ schedule_period_name = st.sidebar.selectbox(
     "Select Schedule Period",
     ["Summer 2025", "Fall 2025", "Spring 2025", "Winter 2026"]
 )
-stop_number = st.sidebar.number_input(
-    "Enter Stop Number", value=10637, min_value=1, step=1
-)
+# Get unique stop numbers from the dataset
+stop_numbers = sorted(df["stop_number"].unique())
+stop_number = st.sidebar.selectbox("Select Stop Number", stop_numbers)
 
 # Filter route numbers based on stop number
 filtered_data = df[df["stop_number"] == stop_number]
