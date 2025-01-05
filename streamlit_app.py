@@ -145,8 +145,8 @@ if st.sidebar.button("Predict"):
                 f"{result['total_alightings']:.2f}"
             ]
         })
-        st.write(prediction_data.style.hide(axis="index").to_html(), unsafe_allow_html=True)
-
+        st.write(prediction_data.style.set_table_styles([{'selector': 'td', 'props': [('white-space', 'nowrap')]}]).hide(axis="index").to_html(), unsafe_allow_html=True)
+        
         st.markdown(
             f"<div style='white-space: nowrap;'><b>Schedule Period:</b> 01/01/2025 to 04/30/2025</div>",
             unsafe_allow_html=True,
@@ -193,7 +193,7 @@ if st.sidebar.button("Predict"):
                     f"{historical['total_alightings']:.2f}"
                 ]
             })
-            st.write(historical_data.style.hide(axis="index").to_html(), unsafe_allow_html=True)
+            st.write(historical_data.style.set_table_styles([{'selector': 'td', 'props': [('white-space', 'nowrap')]}]).hide(axis="index").to_html(), unsafe_allow_html=True)
 
             st.markdown(
                 f"<div style='white-space: nowrap;'><b>Schedule Period Start Date:</b> {historical['start_date']}</div>",
